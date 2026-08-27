@@ -14,6 +14,8 @@ const MESSAGES: Record<string, string> = {
   'auth/cancelled-popup-request': 'Login cancelado.',
   'auth/popup-blocked': 'O navegador bloqueou a janela de login. Permita pop-ups e tente novamente.',
   'auth/account-exists-with-different-credential': 'Já existe uma conta com este e-mail usando outro método de login.',
+  'auth/unauthorized-domain': 'Este site não está autorizado a fazer login. Adicione o domínio em Firebase Console → Authentication → Settings → Authorized domains.',
+  'auth/operation-not-allowed': 'Este método de login não está habilitado no Firebase.',
   'permission-denied': 'Você não tem permissão para realizar esta ação.',
   unavailable: 'Sem conexão com o servidor. Tente novamente.',
 }
