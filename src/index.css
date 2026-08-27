@@ -34,6 +34,7 @@
   --bl-shadow-lg: 0 12px 32px rgba(38, 24, 110, 0.14);
 
   --bl-nav-height: 64px;
+  --bl-safe-top: env(safe-area-inset-top, 0px);
   --bl-safe-bottom: env(safe-area-inset-bottom, 0px);
 
   color-scheme: light;
@@ -79,6 +80,9 @@ body {
   min-height: 100dvh;
   display: flex;
   flex-direction: column;
+  /* viewport-fit=cover deixa o conteúdo desenhar embaixo do notch/Dynamic Island;
+     esse respiro evita que o topo da tela fique cortado (iPhone com notch, etc.). */
+  padding-top: var(--bl-safe-top);
 }
 
 a {
