@@ -1,0 +1,185 @@
+@import 'bootstrap/dist/css/bootstrap.min.css';
+@import 'bootstrap-icons/font/bootstrap-icons.css';
+
+/* ---------------------------------------------------------------------
+   Belook — design tokens
+   Identidade: violeta moderno + neutros quentes. Cantos arredondados,
+   sombras suaves, tipografia densa. Pensado para uso com uma mão no
+   celular: alvos de toque grandes, contraste alto, pouco ruído visual.
+--------------------------------------------------------------------- */
+:root {
+  --bl-primary: #6d5dfc;
+  --bl-primary-dark: #5b3df0;
+  --bl-primary-light: #eeecff;
+  --bl-success: #10b981;
+  --bl-success-light: #e7f9f1;
+  --bl-danger: #ef4444;
+  --bl-danger-light: #fdecec;
+  --bl-warning: #f59e0b;
+  --bl-warning-light: #fef4e3;
+  --bl-info: #3b82f6;
+
+  --bl-bg: #f6f6fb;
+  --bl-surface: #ffffff;
+  --bl-surface-2: #fbfbfe;
+  --bl-text: #16161f;
+  --bl-text-muted: #6b7280;
+  --bl-border: #ebebf2;
+
+  --bl-radius-sm: 10px;
+  --bl-radius: 16px;
+  --bl-radius-lg: 22px;
+  --bl-shadow-sm: 0 1px 2px rgba(20, 20, 40, 0.04);
+  --bl-shadow: 0 4px 16px rgba(38, 24, 110, 0.08);
+  --bl-shadow-lg: 0 12px 32px rgba(38, 24, 110, 0.14);
+
+  --bl-nav-height: 64px;
+  --bl-safe-bottom: env(safe-area-inset-bottom, 0px);
+
+  color-scheme: light;
+}
+
+[data-theme='dark'] {
+  --bl-primary: #8778ff;
+  --bl-primary-dark: #6d5dfc;
+  --bl-primary-light: #241f45;
+  --bl-success-light: #10331f77;
+  --bl-danger-light: #3a1717;
+  --bl-warning-light: #3a2c0f;
+
+  --bl-bg: #101018;
+  --bl-surface: #1a1a26;
+  --bl-surface-2: #1f1f2e;
+  --bl-text: #f2f2f7;
+  --bl-text-muted: #9a9aab;
+  --bl-border: #2a2a3a;
+
+  color-scheme: dark;
+}
+
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+html,
+body {
+  min-height: 100%;
+}
+
+body {
+  background: var(--bl-bg);
+  color: var(--bl-text);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  font-size: 15px;
+  -webkit-font-smoothing: antialiased;
+  overscroll-behavior-y: none;
+}
+
+#root {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+a {
+  color: var(--bl-primary);
+  text-decoration: none;
+}
+
+/* Cards com a identidade Belook em vez do card Bootstrap padrão */
+.bl-card {
+  background: var(--bl-surface);
+  border: 1px solid var(--bl-border);
+  border-radius: var(--bl-radius);
+  box-shadow: var(--bl-shadow-sm);
+}
+
+.bl-surface-muted {
+  background: var(--bl-surface-2);
+}
+
+.text-muted-bl {
+  color: var(--bl-text-muted) !important;
+}
+
+/* O Bootstrap 5 não inclui um utilitário min-width-0 — necessário para que
+   texto dentro de um item flex consiga truncar (text-truncate) em vez de
+   forçar overflow do irmão flex-shrink-0 (ex.: valor em dinheiro) para fora
+   do card. */
+.min-width-0 {
+  min-width: 0;
+}
+
+/* Botões — sobrescreve o azul padrão do Bootstrap pela cor da marca */
+.btn-primary {
+  --bs-btn-bg: var(--bl-primary);
+  --bs-btn-border-color: var(--bl-primary);
+  --bs-btn-hover-bg: var(--bl-primary-dark);
+  --bs-btn-hover-border-color: var(--bl-primary-dark);
+  --bs-btn-active-bg: var(--bl-primary-dark);
+  --bs-btn-active-border-color: var(--bl-primary-dark);
+  --bs-btn-disabled-bg: var(--bl-primary);
+  --bs-btn-disabled-border-color: var(--bl-primary);
+  box-shadow: var(--bl-shadow-sm);
+}
+
+.btn,
+.form-control,
+.form-select {
+  border-radius: var(--bl-radius-sm);
+}
+
+.btn-lg {
+  border-radius: var(--bl-radius);
+}
+
+.form-control,
+.form-select {
+  background-color: var(--bl-surface);
+  border-color: var(--bl-border);
+  color: var(--bl-text);
+  padding-block: 0.65rem;
+}
+.form-control:focus,
+.form-select:focus {
+  border-color: var(--bl-primary);
+  box-shadow: 0 0 0 0.2rem var(--bl-primary-light);
+  background-color: var(--bl-surface);
+  color: var(--bl-text);
+}
+
+.badge-bl {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 600;
+  font-size: 0.72rem;
+  padding: 0.3em 0.65em;
+  border-radius: 999px;
+}
+
+/* Scrollbar discreta */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--bl-border);
+  border-radius: 999px;
+}
+
+/* Área principal com espaço reservado para a bottom navigation */
+.bl-page {
+  flex: 1;
+  width: 100%;
+  max-width: 720px;
+  margin-inline: auto;
+  padding: 1rem 1rem calc(var(--bl-nav-height) + var(--bl-safe-bottom) + 1.25rem);
+}
+
+@media (min-width: 992px) {
+  .bl-page {
+    max-width: 960px;
+    padding-bottom: 2rem;
+  }
+}

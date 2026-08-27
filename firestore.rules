@@ -1,0 +1,43 @@
+rules_version = '2';
+
+// -----------------------------------------------------------------------
+// Modelo de dados: businesses/{businessId}/{collection}/{docId}
+//
+// Hoje, businessId == uid do usuário autenticado (cada usuário é dono do
+// seu próprio negócio). Isso isola 100% dos dados por usuário sem precisar
+// de nenhuma lógica extra: o próprio ID do documento pai é a verificação.
+//
+// Quando o app suportar múltiplos usuários por empresa, o plano é:
+//   1. Criar uma coleção `memberships/{uid}` -> { businessId, role }
+//   2. Trocar `isOwner(businessId)` abaixo por uma leitura de
+//      `memberships/$(request.auth.uid)` que confirme o vínculo.
+// Nenhuma coleção de dados precisa mudar de formato para isso acontecer.
+// -----------------------------------------------------------------------
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(businessId) {
+      return isSignedIn() && request.auth.uid == businessId;
+    }
+
+    match /businesses/{businessId} {
+      allow read, update: if isOwner(businessId);
+      // criação do doc de negócio acontece uma única vez, no primeiro login
+      allow create: if isSignedIn() && request.auth.uid == businessId;
+      allow delete: if false;
+
+      match /{collection}/{docId} {
+        allow read, write: if isOwner(businessId);
+      }
+    }
+
+    // Nenhum outro caminho é acessível.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
