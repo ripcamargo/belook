@@ -5,9 +5,11 @@ import { useAuth } from '../hooks/useAuth'
 import { getBusiness, updateBusinessName } from '../services/businessService'
 
 const MENU_ITEMS = [
+  { to: '/sales', icon: 'bi-cart3', label: 'Vendas' },
   { to: '/products', icon: 'bi-tag', label: 'Produtos' },
   { to: '/components', icon: 'bi-stars', label: 'Insumos' },
   { to: '/costs', icon: 'bi-calculator', label: 'Fichas de custo' },
+  { to: '/production', icon: 'bi-gear-wide-connected', label: 'Produção' },
   { to: '/customers', icon: 'bi-people', label: 'Clientes' },
   { to: '/suppliers', icon: 'bi-truck', label: 'Fornecedores' },
   { to: '/expenses', icon: 'bi-receipt', label: 'Despesas' },

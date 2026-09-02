@@ -37,6 +37,16 @@ export interface Business extends Omit<OwnedEntity, 'businessId'> {
   allowNegativeStock: boolean
   defaultMinStock: number
   theme: 'light' | 'dark' | 'system'
+  /** quanto vale sua hora de trabalho — usado para custear a mão de obra de cada produto */
+  laborRatePerHour: Cents
+  /** custo fixo mensal (energia, aluguel, depreciação de equipamento etc.) */
+  monthlyOverhead: Cents
+  /** produção mensal estimada, usada para ratear o custo fixo por unidade */
+  estimatedMonthlyProduction: number
+  /** taxa de cartão/marketplace sobre o preço de venda, como fração (0.05 = 5%) */
+  paymentFeePercent: number
+  /** margem de lucro padrão usada para sugerir preço de venda, como fração (0.4 = 40%) */
+  defaultTargetMargin: number
 }
 
 // ---------------------------------------------------------------------------
@@ -66,6 +76,8 @@ export interface Product extends OwnedEntity {
   description?: string
   /** composição usada para calcular o custo do produto (ficha de custo) */
   composition: CostComponentLine[]
+  /** tempo de produção em minutos, usado para custear a mão de obra (tempo × valor/hora do negócio) */
+  laborMinutes: number
   sellingPrice: Cents | null
   active: boolean
 }

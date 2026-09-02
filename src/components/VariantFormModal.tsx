@@ -1,6 +1,7 @@
 import { useEffect, useState, type FormEvent } from 'react'
 import { MoneyInput } from './MoneyInput'
-import { SIZE_SUGGESTIONS } from '../utils/constants'
+import { ColorDot } from './ColorDot'
+import { COLOR_SUGGESTIONS, SIZE_SUGGESTIONS } from '../utils/constants'
 import type { ProductVariant } from '../types'
 import type { VariantInput } from '../services/productService'
 
@@ -84,13 +85,27 @@ export function VariantFormModal({ open, variant, onClose, onSubmit }: VariantFo
         <div className="row g-2">
           <div className="col-6">
             <label className="form-label small fw-semibold">Cor</label>
-            <input
-              type="text"
-              className="form-control"
-              placeholder="Preto"
-              value={form.color}
-              onChange={(e) => setForm((f) => ({ ...f, color: e.target.value }))}
-            />
+            <div className="position-relative">
+              {form.color.trim() && (
+                <span className="position-absolute top-50 translate-middle-y" style={{ left: 12 }}>
+                  <ColorDot color={form.color} />
+                </span>
+              )}
+              <input
+                type="text"
+                className="form-control"
+                style={form.color.trim() ? { paddingLeft: 34 } : undefined}
+                list="color-suggestions"
+                placeholder="Preto"
+                value={form.color}
+                onChange={(e) => setForm((f) => ({ ...f, color: e.target.value }))}
+              />
+            </div>
+            <datalist id="color-suggestions">
+              {COLOR_SUGGESTIONS.map((c) => (
+                <option key={c} value={c} />
+              ))}
+            </datalist>
           </div>
           <div className="col-6">
             <label className="form-label small fw-semibold">Tamanho</label>

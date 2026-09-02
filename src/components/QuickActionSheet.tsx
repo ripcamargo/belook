@@ -42,6 +42,13 @@ const ACTIONS: QuickAction[] = [
     to: '/orders/new',
     tone: 'info',
   },
+  {
+    icon: 'bi-gear-wide-connected',
+    label: 'Registrar produção',
+    description: 'Dar entrada em peças produzidas',
+    to: '/production',
+    tone: 'success',
+  },
 ]
 
 const TONE_STYLES: Record<QuickAction['tone'], { bg: string; color: string }> = {

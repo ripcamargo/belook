@@ -3,8 +3,11 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { PageHeader } from '../components/PageHeader'
 import { LoadingScreen } from '../components/LoadingScreen'
 import { StockBadge } from '../components/StockBadge'
+import { ColorDot } from '../components/ColorDot'
 import { ConfirmDialog } from '../components/ConfirmDialog'
 import { VariantFormModal } from '../components/VariantFormModal'
+import { MoneyInput } from '../components/MoneyInput'
+import { CostCompositionSection } from '../components/CostCompositionSection'
 import { useAuth } from '../hooks/useAuth'
 import {
   createProduct,
@@ -16,7 +19,9 @@ import {
   updateProduct,
   updateVariant,
 } from '../services/productService'
-import type { Product, ProductVariant } from '../types'
+import { listComponents } from '../services/componentService'
+import { getBusiness } from '../services/businessService'
+import type { Business, Component, Product, ProductVariant } from '../types'
 import { PRODUCT_CATEGORY_SUGGESTIONS } from '../utils/constants'
 import { formatMoney } from '../utils/money'
 
@@ -28,11 +33,14 @@ export function ProductFormPage() {
 
   const [product, setProduct] = useState<Product | null>(null)
   const [variants, setVariants] = useState<ProductVariant[]>([])
+  const [components, setComponents] = useState<Component[]>([])
+  const [business, setBusiness] = useState<Business | null>(null)
   const [loading, setLoading] = useState(!isNew)
 
   const [name, setName] = useState('')
   const [category, setCategory] = useState('')
   const [description, setDescription] = useState('')
+  const [sellingPrice, setSellingPrice] = useState(0)
   const [error, setError] = useState<string | null>(null)
   const [saving, setSaving] = useState(false)
 
@@ -43,14 +51,22 @@ export function ProductFormPage() {
   useEffect(() => {
     if (isNew || !businessId || !id) return
     setLoading(true)
-    Promise.all([getProduct(businessId, id), listVariantsByProduct(businessId, id)]).then(([p, v]) => {
+    Promise.all([
+      getProduct(businessId, id),
+      listVariantsByProduct(businessId, id),
+      listComponents(businessId),
+      getBusiness(businessId),
+    ]).then(([p, v, c, b]) => {
       if (p) {
         setProduct(p)
         setName(p.name)
         setCategory(p.category ?? '')
         setDescription(p.description ?? '')
+        setSellingPrice(p.sellingPrice ?? 0)
       }
       setVariants(v)
+      setComponents(c.filter((x) => x.active))
+      setBusiness(b)
       setLoading(false)
     })
   }, [businessId, id, isNew])
@@ -68,7 +84,7 @@ export function ProductFormPage() {
     setError(null)
     setSaving(true)
     try {
-      const input = { name, category: category.trim() || null, description }
+      const input = { name, category: category.trim() || null, description, sellingPrice: sellingPrice || null }
       if (isNew) {
         const newId = await createProduct(businessId, input)
         navigate(`/products/${newId}`, { replace: true })
@@ -124,6 +140,12 @@ export function ProductFormPage() {
         </div>
 
         <div>
+          <label className="form-label small fw-semibold">Preço de venda (opcional)</label>
+          <MoneyInput value={sellingPrice} onChange={setSellingPrice} />
+          <p className="small text-muted-bl mb-0 mt-1">Usado para sugerir o valor na hora de registrar uma venda.</p>
+        </div>
+
+        <div>
           <label className="form-label small fw-semibold">Descrição (opcional)</label>
           <textarea className="form-control" rows={2} value={description} onChange={(e) => setDescription(e.target.value)} />
         </div>
@@ -133,7 +155,7 @@ export function ProductFormPage() {
         </button>
       </form>
 
-      {!isNew && product && (
+      {!isNew && product && businessId && (
         <>
           <div className="d-flex align-items-center justify-content-between mb-2 px-1">
             <h2 className="h6 fw-bold mb-0">Variantes</h2>
@@ -168,7 +190,8 @@ export function ProductFormPage() {
                   }}
                 >
                   <span className="flex-fill min-width-0">
-                    <span className="d-block fw-semibold">
+                    <span className="d-flex align-items-center gap-2 fw-semibold">
+                      <ColorDot color={v.color} />
                       {v.color} / {v.size}
                     </span>
                     <span className="d-block small text-muted-bl">Custo base {formatMoney(v.baseCost)}</span>
@@ -177,6 +200,22 @@ export function ProductFormPage() {
                 </button>
               ))}
             </div>
+          )}
+
+          {business && (
+            <CostCompositionSection
+              businessId={businessId}
+              product={product}
+              variants={variants}
+              components={components}
+              business={business}
+              onCompositionChange={(composition) => setProduct({ ...product, composition })}
+              onLaborMinutesChange={(laborMinutes) => setProduct({ ...product, laborMinutes })}
+              onSellingPriceChange={(price) => {
+                setProduct({ ...product, sellingPrice: price })
+                setSellingPrice(price)
+              }}
+            />
           )}
 
           <button

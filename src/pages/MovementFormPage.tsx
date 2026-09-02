@@ -7,8 +7,9 @@ import { MoneyInput } from '../components/MoneyInput'
 import { useAuth } from '../hooks/useAuth'
 import { listAllVariants, listProducts } from '../services/productService'
 import { listComponents } from '../services/componentService'
+import { listSuppliers } from '../services/supplierService'
 import { createMovement, InsufficientStockError } from '../services/inventoryService'
-import type { Component, MovementType, Product, ProductVariant } from '../types'
+import type { Component, MovementType, Product, ProductVariant, Supplier } from '../types'
 import { OUTBOUND_REASONS } from '../utils/constants'
 import { formatMoney } from '../utils/money'
 
@@ -22,6 +23,7 @@ export function MovementFormPage() {
   const [products, setProducts] = useState<Product[]>([])
   const [variants, setVariants] = useState<ProductVariant[]>([])
   const [components, setComponents] = useState<Component[]>([])
+  const [suppliers, setSuppliers] = useState<Supplier[]>([])
   const [loading, setLoading] = useState(true)
 
   const [direction, setDirection] = useState<Direction>(searchParams.get('type') === 'saida' ? 'saida' : 'entrada')
@@ -41,11 +43,12 @@ export function MovementFormPage() {
 
   useEffect(() => {
     if (!businessId) return
-    Promise.all([listProducts(businessId), listAllVariants(businessId), listComponents(businessId)]).then(
-      ([p, v, c]) => {
+    Promise.all([listProducts(businessId), listAllVariants(businessId), listComponents(businessId), listSuppliers(businessId)]).then(
+      ([p, v, c, s]) => {
         setProducts(p.filter((x) => x.active))
         setVariants(v.filter((x) => x.active))
         setComponents(c.filter((x) => x.active))
+        setSuppliers(s.filter((x) => x.active))
         setLoading(false)
       },
     )
@@ -262,7 +265,18 @@ export function MovementFormPage() {
               </div>
               <div>
                 <label className="form-label small fw-semibold">Fornecedor (opcional)</label>
-                <input type="text" className="form-control" value={supplierName} onChange={(e) => setSupplierName(e.target.value)} />
+                <input
+                  type="text"
+                  className="form-control"
+                  list="supplier-suggestions"
+                  value={supplierName}
+                  onChange={(e) => setSupplierName(e.target.value)}
+                />
+                <datalist id="supplier-suggestions">
+                  {suppliers.map((s) => (
+                    <option key={s.id} value={s.name} />
+                  ))}
+                </datalist>
               </div>
             </>
           ) : (

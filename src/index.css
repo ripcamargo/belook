@@ -184,6 +184,6 @@ a {
 @media (min-width: 992px) {
   .bl-page {
     max-width: 960px;
-    padding-bottom: 2rem;
+    padding-bottom: calc(var(--bl-nav-height) + var(--bl-safe-bottom) + 2rem);
   }
 }

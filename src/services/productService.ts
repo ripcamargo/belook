@@ -1,12 +1,13 @@
 import { addDoc, deleteField, doc, getDoc, getDocs, serverTimestamp, updateDoc } from 'firebase/firestore'
 import { businessCollection, mapOwnedDoc } from '../firebase/firestoreUtils'
 import { createMovement } from './inventoryService'
-import type { Product, ProductVariant } from '../types'
+import type { CostComponentLine, Product, ProductVariant } from '../types'
 
 export interface ProductInput {
   name: string
   category: string | null
   description?: string
+  sellingPrice: number | null
 }
 
 export interface VariantInput {
@@ -40,7 +41,8 @@ export async function createProduct(businessId: string, input: ProductInput): Pr
     category: input.category,
     description: input.description?.trim() || null,
     composition: [],
-    sellingPrice: null,
+    laborMinutes: 0,
+    sellingPrice: input.sellingPrice,
     active: true,
     createdAt: serverTimestamp(),
     updatedAt: serverTimestamp(),
@@ -54,12 +56,25 @@ export async function updateProduct(businessId: string, id: string, input: Produ
     name: input.name.trim(),
     category: input.category,
     description: input.description?.trim() || deleteField(),
+    sellingPrice: input.sellingPrice,
     updatedAt: serverTimestamp(),
   })
 }
 
 export async function setProductActive(businessId: string, id: string, active: boolean): Promise<void> {
   await updateDoc(doc(businessCollection(businessId, 'products'), id), { active, updatedAt: serverTimestamp() })
+}
+
+export async function updateComposition(businessId: string, id: string, composition: CostComponentLine[]): Promise<void> {
+  await updateDoc(doc(businessCollection(businessId, 'products'), id), { composition, updatedAt: serverTimestamp() })
+}
+
+export async function updateLaborMinutes(businessId: string, id: string, laborMinutes: number): Promise<void> {
+  await updateDoc(doc(businessCollection(businessId, 'products'), id), { laborMinutes, updatedAt: serverTimestamp() })
+}
+
+export async function updateSellingPrice(businessId: string, id: string, sellingPrice: number): Promise<void> {
+  await updateDoc(doc(businessCollection(businessId, 'products'), id), { sellingPrice, updatedAt: serverTimestamp() })
 }
 
 // Variantes ----------------------------------------------------------------

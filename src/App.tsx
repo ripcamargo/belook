@@ -6,7 +6,6 @@ import { LoginPage } from './pages/LoginPage'
 import { DashboardPage } from './pages/DashboardPage'
 import { MorePage } from './pages/MorePage'
 import { NotFoundPage } from './pages/NotFoundPage'
-import { ComingSoonPage } from './pages/ComingSoonPage'
 import { ProductsPage } from './pages/ProductsPage'
 import { ProductFormPage } from './pages/ProductFormPage'
 import { ComponentsPage } from './pages/ComponentsPage'
@@ -14,6 +13,20 @@ import { ComponentFormPage } from './pages/ComponentFormPage'
 import { InventoryPage } from './pages/InventoryPage'
 import { InventoryHistoryPage } from './pages/InventoryHistoryPage'
 import { MovementFormPage } from './pages/MovementFormPage'
+import { SalesPage } from './pages/SalesPage'
+import { SaleFormPage } from './pages/SaleFormPage'
+import { CustomersPage } from './pages/CustomersPage'
+import { CustomerFormPage } from './pages/CustomerFormPage'
+import { CostSheetsPage } from './pages/CostSheetsPage'
+import { SuppliersPage } from './pages/SuppliersPage'
+import { SupplierFormPage } from './pages/SupplierFormPage'
+import { ExpensesPage } from './pages/ExpensesPage'
+import { ExpenseFormPage } from './pages/ExpenseFormPage'
+import { FinancePage } from './pages/FinancePage'
+import { SettingsPage } from './pages/SettingsPage'
+import { OrdersPage } from './pages/OrdersPage'
+import { OrderFormPage } from './pages/OrderFormPage'
+import { ProductionPage } from './pages/ProductionPage'
 
 export default function App() {
   return (
@@ -29,14 +42,13 @@ export default function App() {
             <Route path="/inventory/movement" element={<MovementFormPage />} />
             <Route path="/inventory/history" element={<InventoryHistoryPage />} />
 
-            <Route path="/sales" element={<ComingSoonPage title="Vendas" icon="bi-cart3" />} />
-            <Route path="/sales/new" element={<ComingSoonPage title="Nova venda" icon="bi-cart-plus" />} />
+            <Route path="/sales" element={<SalesPage />} />
+            <Route path="/sales/new" element={<SaleFormPage />} />
 
-            <Route path="/orders" element={<ComingSoonPage title="Pedidos" icon="bi-bag" />} />
-            <Route path="/orders/new" element={<ComingSoonPage title="Novo pedido" icon="bi-clipboard-plus" />} />
-            <Route path="/orders/:id" element={<ComingSoonPage title="Pedido" icon="bi-bag-check" />} />
+            <Route path="/orders" element={<OrdersPage />} />
+            <Route path="/orders/:id" element={<OrderFormPage />} />
 
-            <Route path="/production" element={<ComingSoonPage title="Produção" icon="bi-gear-wide-connected" />} />
+            <Route path="/production" element={<ProductionPage />} />
 
             <Route path="/products" element={<ProductsPage />} />
             <Route path="/products/:id" element={<ProductFormPage />} />
@@ -44,15 +56,18 @@ export default function App() {
             <Route path="/components" element={<ComponentsPage />} />
             <Route path="/components/:id" element={<ComponentFormPage />} />
 
-            <Route path="/costs" element={<ComingSoonPage title="Fichas de custo" icon="bi-calculator" />} />
+            <Route path="/costs" element={<CostSheetsPage />} />
 
-            <Route path="/customers" element={<ComingSoonPage title="Clientes" icon="bi-people" />} />
-            <Route path="/suppliers" element={<ComingSoonPage title="Fornecedores" icon="bi-truck" />} />
+            <Route path="/customers" element={<CustomersPage />} />
+            <Route path="/customers/:id" element={<CustomerFormPage />} />
+            <Route path="/suppliers" element={<SuppliersPage />} />
+            <Route path="/suppliers/:id" element={<SupplierFormPage />} />
 
-            <Route path="/finance" element={<ComingSoonPage title="Financeiro" icon="bi-wallet2" />} />
-            <Route path="/expenses" element={<ComingSoonPage title="Despesas" icon="bi-receipt" />} />
+            <Route path="/finance" element={<FinancePage />} />
+            <Route path="/expenses" element={<ExpensesPage />} />
+            <Route path="/expenses/:id" element={<ExpenseFormPage />} />
 
-            <Route path="/settings" element={<ComingSoonPage title="Configurações" icon="bi-gear" />} />
+            <Route path="/settings" element={<SettingsPage />} />
 
             <Route path="/more" element={<MorePage />} />
           </Route>

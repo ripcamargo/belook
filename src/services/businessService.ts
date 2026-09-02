@@ -21,6 +21,11 @@ export async function ensureBusinessDoc(uid: string, email: string | null): Prom
     allowNegativeStock: false,
     defaultMinStock: 5,
     theme: 'system',
+    laborRatePerHour: 0,
+    monthlyOverhead: 0,
+    estimatedMonthlyProduction: 0,
+    paymentFeePercent: 0,
+    defaultTargetMargin: 0.4,
     createdAt: serverTimestamp(),
     updatedAt: serverTimestamp(),
   })
@@ -41,4 +46,18 @@ export async function getBusiness(businessId: string): Promise<Business | null> 
 export async function updateBusinessName(businessId: string, name: string): Promise<void> {
   if (!name.trim()) throw new Error('Informe o nome da empresa.')
   await updateDoc(doc(db, 'businesses', businessId), { name: name.trim(), updatedAt: serverTimestamp() })
+}
+
+export interface BusinessSettingsInput {
+  allowNegativeStock: boolean
+  theme: Business['theme']
+  laborRatePerHour: number
+  monthlyOverhead: number
+  estimatedMonthlyProduction: number
+  paymentFeePercent: number
+  defaultTargetMargin: number
+}
+
+export async function updateBusinessSettings(businessId: string, input: BusinessSettingsInput): Promise<void> {
+  await updateDoc(doc(db, 'businesses', businessId), { ...input, updatedAt: serverTimestamp() })
 }

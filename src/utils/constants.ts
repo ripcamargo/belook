@@ -1,4 +1,4 @@
-import type { MovementType } from '../types'
+import type { ExpenseCategory, MovementType, OrderStatus } from '../types'
 
 /** Sugestões de categoria — o campo continua sendo texto livre. */
 export const PRODUCT_CATEGORY_SUGGESTIONS = ['Camisetas', 'Moletons', 'Bonés', 'Outros']
@@ -7,6 +7,24 @@ export const COMPONENT_CATEGORY_SUGGESTIONS = ['Estampas', 'Insumos', 'Embalagen
 export const UNIT_SUGGESTIONS = ['unidade', 'metro', 'litro', 'kg', 'par', 'folha']
 
 export const SIZE_SUGGESTIONS = ['PP', 'P', 'M', 'G', 'GG', 'XG']
+
+export const COLOR_SUGGESTIONS = [
+  'Branco',
+  'Preto',
+  'Cinza',
+  'Chumbo',
+  'Azul',
+  'Azul Marinho',
+  'Vermelho',
+  'Verde',
+  'Amarelo',
+  'Rosa',
+  'Roxo',
+  'Marrom',
+  'Bege',
+  'Laranja',
+  'Vinho',
+]
 
 /** Motivos de saída manual. "Venda" não está aqui de propósito: vendas
  *  passam pelo fluxo de Vendas (Etapa 3), que já calcula receita/lucro e
@@ -29,3 +47,23 @@ export const MOVEMENT_TYPE_LABELS: Record<MovementType, string> = {
   venda: 'Venda',
   producao: 'Produção',
 }
+
+export const EXPENSE_CATEGORY_LABELS: Record<ExpenseCategory, string> = {
+  frete: 'Frete',
+  marketing: 'Marketing',
+  embalagem: 'Embalagem',
+  ferramentas: 'Ferramentas',
+  equipamentos: 'Equipamentos',
+  taxas: 'Taxas',
+  outros: 'Outros',
+}
+
+export const ORDER_STATUS_LABELS: Record<OrderStatus, string> = {
+  recebido: 'Recebido',
+  em_producao: 'Em produção',
+  pronto: 'Pronto',
+  entregue: 'Entregue',
+  cancelado: 'Cancelado',
+}
+
+export const ORDER_STATUS_FLOW: OrderStatus[] = ['recebido', 'em_producao', 'pronto', 'entregue']
