@@ -1,4 +1,4 @@
-import { collection, doc, getDocs, limit, orderBy, query, runTransaction, serverTimestamp } from 'firebase/firestore'
+import { collection, doc, getDoc, getDocs, limit, orderBy, query, runTransaction, serverTimestamp } from 'firebase/firestore'
 import { db } from '../firebase/config'
 import { businessCollection, businessRef, mapOwnedDoc } from '../firebase/firestoreUtils'
 import { InsufficientStockError } from './inventoryService'
@@ -108,4 +108,37 @@ export async function listRecentSales(businessId: string, count = 50): Promise<S
   const q = query(businessCollection(businessId, 'sales'), orderBy('createdAt', 'desc'), limit(count))
   const snap = await getDocs(q)
   return snap.docs.map((d) => mapOwnedDoc<Sale>(d, businessId))
+}
+
+export async function getSale(businessId: string, id: string): Promise<Sale | null> {
+  const snap = await getDoc(doc(businessCollection(businessId, 'sales'), id))
+  if (!snap.exists()) return null
+  return mapOwnedDoc<Sale>(snap, businessId)
+}
+
+/**
+ * Exclui uma venda e devolve a quantidade de cada item ao estoque da variante
+ * correspondente, na mesma transação — o inverso de createSale. Se a variante
+ * já não existir mais, o item é ignorado (nada a devolver).
+ */
+export async function deleteSale(businessId: string, id: string): Promise<void> {
+  const saleRef = doc(businessCollection(businessId, 'sales'), id)
+  const saleSnap = await getDoc(saleRef)
+  if (!saleSnap.exists()) throw new Error('Venda não encontrada.')
+  const sale = mapOwnedDoc<Sale>(saleSnap, businessId)
+
+  const variantRefs = sale.items.map((item) => doc(db, 'businesses', businessId, 'variants', item.variantId))
+
+  await runTransaction(db, async (transaction) => {
+    const variantSnaps = await Promise.all(variantRefs.map((ref) => transaction.get(ref)))
+    variantSnaps.forEach((variantSnap, index) => {
+      if (!variantSnap.exists()) return
+      const currentStock = (variantSnap.data().stock as number) ?? 0
+      transaction.update(variantRefs[index], {
+        stock: currentStock + sale.items[index].quantity,
+        updatedAt: serverTimestamp(),
+      })
+    })
+    transaction.delete(saleRef)
+  })
 }

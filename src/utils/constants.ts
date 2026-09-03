@@ -4,7 +4,7 @@ import type { ExpenseCategory, MovementType, OrderStatus } from '../types'
 export const PRODUCT_CATEGORY_SUGGESTIONS = ['Camisetas', 'Moletons', 'Bonés', 'Outros']
 export const COMPONENT_CATEGORY_SUGGESTIONS = ['Estampas', 'Insumos', 'Embalagens', 'Outros']
 
-export const UNIT_SUGGESTIONS = ['unidade', 'metro', 'litro', 'kg', 'par', 'folha']
+export const UNIT_SUGGESTIONS = ['unidade', 'metro', 'm²', 'cm²', 'litro', 'kg', 'par', 'folha']
 
 export const SIZE_SUGGESTIONS = ['PP', 'P', 'M', 'G', 'GG', 'XG']
 

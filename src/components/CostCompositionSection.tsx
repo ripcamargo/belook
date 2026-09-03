@@ -37,6 +37,8 @@ export function CostCompositionSection({
 }: CostCompositionSectionProps) {
   const [componentId, setComponentId] = useState('')
   const [quantity, setQuantity] = useState(1)
+  const [widthCm, setWidthCm] = useState('')
+  const [heightCm, setHeightCm] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [saving, setSaving] = useState(false)
 
@@ -52,6 +54,27 @@ export function CostCompositionSection({
   const laborCost = calculateLaborCost(product.laborMinutes ?? 0, business.laborRatePerHour ?? 0)
   const overheadCost = calculateOverheadPerUnit(business)
 
+  const selectedComponent = components.find((c) => c.id === componentId) ?? null
+  const selectedUnit = selectedComponent?.unit.trim().toLowerCase() ?? ''
+  const isSquareMeterUnit = selectedUnit === 'm²' || selectedUnit === 'm2'
+  const isSquareCmUnit = selectedUnit === 'cm²' || selectedUnit === 'cm2'
+  const isAreaUnit = isSquareMeterUnit || isSquareCmUnit
+
+  const areaQuantity = (() => {
+    const width = Number(widthCm.replace(',', '.'))
+    const height = Number(heightCm.replace(',', '.'))
+    if (!width || !height) return null
+    const areaCm2 = width * height
+    return isSquareMeterUnit ? areaCm2 / 10000 : areaCm2
+  })()
+
+  function selectComponent(id: string) {
+    setComponentId(id)
+    setWidthCm('')
+    setHeightCm('')
+    setQuantity(1)
+  }
+
   async function addLine() {
     setError(null)
     const component = components.find((c) => c.id === componentId)
@@ -59,8 +82,9 @@ export function CostCompositionSection({
       setError('Selecione um insumo.')
       return
     }
-    if (quantity <= 0) {
-      setError('Informe uma quantidade maior que zero.')
+    const finalQuantity = isAreaUnit ? areaQuantity ?? 0 : quantity
+    if (finalQuantity <= 0) {
+      setError(isAreaUnit ? 'Informe largura e altura.' : 'Informe uma quantidade maior que zero.')
       return
     }
 
@@ -68,7 +92,7 @@ export function CostCompositionSection({
       refId: component.id,
       refType: 'component',
       name: component.name,
-      quantity,
+      quantity: finalQuantity,
       unitCost: component.unitCost,
     }
     setSaving(true)
@@ -78,6 +102,8 @@ export function CostCompositionSection({
       onCompositionChange(next)
       setComponentId('')
       setQuantity(1)
+      setWidthCm('')
+      setHeightCm('')
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Não foi possível salvar.')
     } finally {
@@ -159,9 +185,9 @@ export function CostCompositionSection({
           </p>
         ) : (
           <div className="row g-2 align-items-end">
-            <div className="col-7">
+            <div className="col-12">
               <label className="form-label small fw-semibold">Insumo</label>
-              <select className="form-select" value={componentId} onChange={(e) => setComponentId(e.target.value)}>
+              <select className="form-select" value={componentId} onChange={(e) => selectComponent(e.target.value)}>
                 <option value="" disabled>
                   Selecione
                 </option>
@@ -172,23 +198,63 @@ export function CostCompositionSection({
                 ))}
               </select>
             </div>
-            <div className="col-3">
-              <label className="form-label small fw-semibold">Qtd.</label>
-              <input
-                type="number"
-                inputMode="decimal"
-                min={0}
-                step="any"
-                className="form-control"
-                value={quantity}
-                onChange={(e) => setQuantity(Number(e.target.value) || 0)}
-              />
-            </div>
-            <div className="col-2">
-              <button type="button" className="btn w-100" style={{ background: 'var(--bl-primary-light)', color: 'var(--bl-primary)' }} onClick={addLine} disabled={saving}>
-                <i className="bi bi-plus-lg" />
-              </button>
-            </div>
+
+            {isAreaUnit ? (
+              <>
+                <div className="col-4">
+                  <label className="form-label small fw-semibold">Largura (cm)</label>
+                  <input
+                    type="number"
+                    inputMode="decimal"
+                    min={0}
+                    step="any"
+                    className="form-control"
+                    value={widthCm}
+                    onChange={(e) => setWidthCm(e.target.value)}
+                  />
+                </div>
+                <div className="col-4">
+                  <label className="form-label small fw-semibold">Altura (cm)</label>
+                  <input
+                    type="number"
+                    inputMode="decimal"
+                    min={0}
+                    step="any"
+                    className="form-control"
+                    value={heightCm}
+                    onChange={(e) => setHeightCm(e.target.value)}
+                  />
+                </div>
+                <div className="col-4 d-flex flex-column gap-1">
+                  <span className="small text-muted-bl text-truncate">
+                    = {areaQuantity != null ? areaQuantity.toLocaleString('pt-BR', { maximumFractionDigits: 4 }) : '—'} {selectedComponent?.unit}
+                  </span>
+                  <button type="button" className="btn w-100" style={{ background: 'var(--bl-primary-light)', color: 'var(--bl-primary)' }} onClick={addLine} disabled={saving}>
+                    <i className="bi bi-plus-lg" />
+                  </button>
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="col-8">
+                  <label className="form-label small fw-semibold">Qtd.</label>
+                  <input
+                    type="number"
+                    inputMode="decimal"
+                    min={0}
+                    step="any"
+                    className="form-control"
+                    value={quantity}
+                    onChange={(e) => setQuantity(Number(e.target.value) || 0)}
+                  />
+                </div>
+                <div className="col-4">
+                  <button type="button" className="btn w-100" style={{ background: 'var(--bl-primary-light)', color: 'var(--bl-primary)' }} onClick={addLine} disabled={saving}>
+                    <i className="bi bi-plus-lg" />
+                  </button>
+                </div>
+              </>
+            )}
           </div>
         )}
 

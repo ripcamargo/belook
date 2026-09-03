@@ -60,7 +60,12 @@ export function SalesPage() {
               <p className="small fw-bold text-muted-bl mb-2">{date}</p>
               <div className="d-flex flex-column gap-2">
                 {items.map((sale) => (
-                  <div key={sale.id} className="bl-card p-3 d-flex flex-column gap-2">
+                  <Link
+                    key={sale.id}
+                    to={`/sales/${sale.id}`}
+                    className="bl-card p-3 d-flex flex-column gap-2 text-decoration-none"
+                    style={{ color: 'var(--bl-text)' }}
+                  >
                     <div className="d-flex align-items-center justify-content-between gap-2">
                       <span className="fw-semibold text-truncate">{sale.customerName || 'Venda avulsa'}</span>
                       <span className="fw-bold flex-shrink-0">{formatMoney(sale.totalRevenue)}</span>
@@ -77,7 +82,7 @@ export function SalesPage() {
                       <span>Lucro</span>
                       <span className="fw-semibold">{formatMoney(sale.profit)}</span>
                     </div>
-                  </div>
+                  </Link>
                 ))}
               </div>
             </div>

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { PageHeader } from '../components/PageHeader'
 import { EmptyState } from '../components/EmptyState'
 import { LoadingScreen } from '../components/LoadingScreen'
@@ -42,7 +43,12 @@ export function InventoryHistoryPage() {
                 {items.map((m) => {
                   const positive = m.quantity > 0
                   return (
-                    <div key={m.id} className="bl-card p-3 d-flex align-items-center gap-3">
+                    <Link
+                      key={m.id}
+                      to={`/inventory/movements/${m.id}`}
+                      className="bl-card p-3 d-flex align-items-center gap-3 text-decoration-none"
+                      style={{ color: 'var(--bl-text)' }}
+                    >
                       <span
                         className="d-flex align-items-center justify-content-center rounded-3 flex-shrink-0"
                         style={{
@@ -62,7 +68,7 @@ export function InventoryHistoryPage() {
                         <span className="d-block small text-muted-bl">{MOVEMENT_TYPE_LABELS[m.type]}</span>
                       </span>
                       {m.totalCost != null && <span className="small fw-semibold flex-shrink-0">{formatMoney(m.totalCost)}</span>}
-                    </div>
+                    </Link>
                   )
                 })}
               </div>

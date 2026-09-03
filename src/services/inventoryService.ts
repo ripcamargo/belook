@@ -1,6 +1,7 @@
 import {
   collection,
   doc,
+  getDoc,
   getDocs,
   limit,
   orderBy,
@@ -104,4 +105,38 @@ export async function listMovementsForTarget(businessId: string, targetId: strin
   )
   const snap = await getDocs(q)
   return snap.docs.map((d) => mapOwnedDoc<InventoryMovement>(d, businessId))
+}
+
+export async function getMovement(businessId: string, id: string): Promise<InventoryMovement | null> {
+  const snap = await getDoc(doc(businessCollection(businessId, 'movements'), id))
+  if (!snap.exists()) return null
+  return mapOwnedDoc<InventoryMovement>(snap, businessId)
+}
+
+/**
+ * Exclui uma movimentação manual e reverte o saldo do item afetado. Movimentações
+ * geradas automaticamente (venda, produção) não podem ser excluídas por aqui —
+ * o estoque só volta ao normal desfazendo o registro de origem (a venda/produção).
+ */
+export async function deleteMovement(businessId: string, id: string): Promise<void> {
+  const movementRef = doc(businessCollection(businessId, 'movements'), id)
+  const movementSnap = await getDoc(movementRef)
+  if (!movementSnap.exists()) throw new Error('Movimentação não encontrada.')
+  const movement = mapOwnedDoc<InventoryMovement>(movementSnap, businessId)
+
+  if (movement.type === 'venda' || movement.type === 'producao') {
+    throw new Error('Essa movimentação foi gerada automaticamente e não pode ser excluída diretamente.')
+  }
+
+  const targetCollection = movement.targetType === 'variant' ? 'variants' : 'components'
+  const targetDocRef = doc(db, 'businesses', businessId, targetCollection, movement.targetId)
+
+  await runTransaction(db, async (transaction) => {
+    const targetSnap = await transaction.get(targetDocRef)
+    if (targetSnap.exists()) {
+      const currentStock = (targetSnap.data().stock as number) ?? 0
+      transaction.update(targetDocRef, { stock: currentStock - movement.quantity, updatedAt: serverTimestamp() })
+    }
+    transaction.delete(movementRef)
+  })
 }

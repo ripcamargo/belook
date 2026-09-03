@@ -13,8 +13,10 @@ import { ComponentFormPage } from './pages/ComponentFormPage'
 import { InventoryPage } from './pages/InventoryPage'
 import { InventoryHistoryPage } from './pages/InventoryHistoryPage'
 import { MovementFormPage } from './pages/MovementFormPage'
+import { MovementDetailPage } from './pages/MovementDetailPage'
 import { SalesPage } from './pages/SalesPage'
 import { SaleFormPage } from './pages/SaleFormPage'
+import { SaleDetailPage } from './pages/SaleDetailPage'
 import { CustomersPage } from './pages/CustomersPage'
 import { CustomerFormPage } from './pages/CustomerFormPage'
 import { CostSheetsPage } from './pages/CostSheetsPage'
@@ -41,9 +43,11 @@ export default function App() {
             <Route path="/inventory" element={<InventoryPage />} />
             <Route path="/inventory/movement" element={<MovementFormPage />} />
             <Route path="/inventory/history" element={<InventoryHistoryPage />} />
+            <Route path="/inventory/movements/:id" element={<MovementDetailPage />} />
 
             <Route path="/sales" element={<SalesPage />} />
             <Route path="/sales/new" element={<SaleFormPage />} />
+            <Route path="/sales/:id" element={<SaleDetailPage />} />
 
             <Route path="/orders" element={<OrdersPage />} />
             <Route path="/orders/:id" element={<OrderFormPage />} />
