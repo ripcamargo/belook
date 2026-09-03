@@ -193,7 +193,8 @@ export function CostCompositionSection({
                 </option>
                 {components.map((c) => (
                   <option key={c.id} value={c.id}>
-                    {c.name} ({formatMoney(c.unitCost)}/{c.unit})
+                    {c.name}
+                    {c.color || c.size ? ` — ${[c.color, c.size].filter(Boolean).join(' / ')}` : ''} ({formatMoney(c.unitCost)}/{c.unit})
                   </option>
                 ))}
               </select>

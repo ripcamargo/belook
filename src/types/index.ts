@@ -102,6 +102,9 @@ export interface ProductVariant extends OwnedEntity {
 export interface Component extends OwnedEntity {
   name: string
   category: string | null
+  /** opcional — usado quando o insumo em si varia por cor/tamanho (ex.: camiseta lisa) */
+  color: string | null
+  size: string | null
   unit: string
   unitCost: Cents
   stock: number

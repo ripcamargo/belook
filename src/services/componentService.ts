@@ -6,6 +6,8 @@ import type { Component } from '../types'
 export interface ComponentInput {
   name: string
   category: string | null
+  color: string | null
+  size: string | null
   unit: string
   unitCost: number
   minStock: number
@@ -31,6 +33,8 @@ export async function createComponent(businessId: string, userId: string, input:
   const ref = await addDoc(businessCollection(businessId, 'components'), {
     name: input.name.trim(),
     category: input.category,
+    color: input.color,
+    size: input.size,
     unit: input.unit,
     unitCost: input.unitCost,
     stock: 0,
@@ -65,6 +69,8 @@ export async function updateComponent(
   await updateDoc(doc(businessCollection(businessId, 'components'), id), {
     name: input.name.trim(),
     category: input.category,
+    color: input.color,
+    size: input.size,
     unit: input.unit,
     unitCost: input.unitCost,
     minStock: input.minStock,

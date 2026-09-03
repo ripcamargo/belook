@@ -4,6 +4,7 @@ import { PageHeader } from '../components/PageHeader'
 import { EmptyState } from '../components/EmptyState'
 import { LoadingScreen } from '../components/LoadingScreen'
 import { StockBadge } from '../components/StockBadge'
+import { ColorDot } from '../components/ColorDot'
 import { useAuth } from '../hooks/useAuth'
 import { listComponents } from '../services/componentService'
 import type { Component } from '../types'
@@ -64,7 +65,10 @@ export function ComponentsPage() {
               </span>
               <span className="flex-fill min-width-0">
                 <span className="d-block fw-semibold text-truncate">{c.name}</span>
-                <span className="d-block small text-muted-bl">
+                <span className="d-flex align-items-center gap-1 small text-muted-bl">
+                  {c.color && <ColorDot color={c.color} size={10} />}
+                  {[c.color, c.size].filter(Boolean).join(' / ')}
+                  {(c.color || c.size) && ' · '}
                   {formatMoney(c.unitCost)} / {c.unit}
                 </span>
               </span>
