@@ -243,11 +243,15 @@ export function MovementFormPage() {
                 <option value="" disabled>
                   Selecione
                 </option>
-                {components.map((c) => (
-                  <option key={c.id} value={c.id}>
-                    {c.name} — estoque {c.stock}
-                  </option>
-                ))}
+                {components.map((c) => {
+                  const details = [c.color, c.size].filter(Boolean).join(' / ')
+                  return (
+                    <option key={c.id} value={c.id}>
+                      {c.name}
+                      {details ? ` (${details})` : ''} — estoque {c.stock}
+                    </option>
+                  )
+                })}
               </select>
             </div>
           )}
